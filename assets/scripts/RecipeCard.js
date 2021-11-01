@@ -1,8 +1,9 @@
 class RecipeCard extends HTMLElement {
   constructor() {
     // Part 1 Expose - TODO
-
+    super();
     // You'll want to attach the shadow DOM here
+    this.attachShadow({mode : 'open'})
   }
 
   set data(data) {
@@ -100,6 +101,64 @@ class RecipeCard extends HTMLElement {
     // created in the constructor()
 
     // Part 1 Expose - TODO
+   //Display image
+    const image = document.createElement('img');
+    let value = searchForKey(data, 'thumbnailUrl');
+    let alternate = searchForKey(data,"name");
+    image.setAttribute("src",value);
+    image.setAttribute("alt",alternate);
+    card.appendChild(image);
+    //Display title w/ link
+    const pTitle = document.createElement('p');
+    pTitle.setAttribute("class", 'title');
+    const articleLink = document.createElement('a');
+    let recipePage = getUrl(data);
+    articleLink.setAttribute("href", recipePage);
+    articleLink.textContent = searchForKey(data, "headline");
+    pTitle.appendChild(articleLink);
+    card.appendChild(pTitle);
+    //Display organization
+    const pOrganization = document.createElement('p');
+    pOrganization.setAttribute("class", 'organization');
+    pOrganization.textContent = getOrganization(data);
+    card.appendChild(pOrganization);
+    //rating div
+    const divRating = document.createElement('div');
+    divRating.setAttribute("class",'rating');
+    const spanRating = document.createElement('span');
+    let numStars = searchForKey(data, "ratingValue");
+    divRating.appendChild(spanRating);
+    card.appendChild(divRating);
+    //Display reviews and number of reviews
+    if(numStars != null){
+      spanRating.textContent = numStars;
+      const starsImg = document.createElement('img');
+      starsImg.setAttribute("src", "assets/images/icons/" + Math.round(numStars)+ "-star.svg");
+      starsImg.setAttribute("alt", Math.round(numStars) + "stars");
+      const numReviewSpan = document.createElement('span');
+      numReviewSpan.textContent = searchForKey(data, "ratingCount");
+      divRating.appendChild(starsImg);
+      divRating.appendChild(numReviewSpan);
+    }else{
+      spanRating.textContent = "No Reviews";
+    }
+    //Show time to prepare
+    const time = document.createElement('time');
+    time.textContent = convertTime(searchForKey(data, "totalTime"));
+    card.appendChild(time);
+    // Show ingredients
+    const pIngredients = document.createElement('p');
+    pIngredients.setAttribute("class", "ingredients");
+    pIngredients.textContent = searchForKey(data, "recipeIngredient");
+    card.appendChild(pIngredients);
+
+
+
+
+    
+
+    this.shadowRoot.appendChild(styleElem);
+    this.shadowRoot.appendChild(card);
   }
 }
 
